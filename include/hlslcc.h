@@ -786,6 +786,8 @@ static const unsigned int HLSLCC_FLAG_KEEP_VARYING_LOCATIONS = 0x20000000;
 // Code generation might vary for mobile targets, or using lower sampler precision than full by default
 static const unsigned int HLSLCC_FLAG_MOBILE_TARGET = 0x40000000;
 
+static const unsigned int HLSLCC_FLAG_NO_PREFIX = 0x80000000;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

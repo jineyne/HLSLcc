@@ -27,6 +27,13 @@
 //
 void ToGLSL::SetIOPrefixes()
 {
+    if (psContext->flags & HLSLCC_FLAG_NO_PREFIX)
+    {
+        psContext->inputPrefix = "";
+        psContext->outputPrefix = "";
+        return;
+    }
+
     switch (psContext->psShader->eShaderType)
     {
         case VERTEX_SHADER:
@@ -343,14 +350,14 @@ static void AddVersionDependentCode(HLSLCrossCompilerContext* psContext)
         program objects, shader code must redeclare that block prior to use.
     */
     /* DISABLED FOR NOW */
-/*  if(psContext->psShader->eShaderType == VERTEX_SHADER && psContext->psShader->eTargetLanguage >= LANG_410)
+    if(psContext->psShader->eShaderType == VERTEX_SHADER && psContext->psShader->eTargetLanguage >= LANG_410)
     {
         bcatcstr(glsl, "out gl_PerVertex {\n");
-        bcatcstr(glsl, "vec4 gl_Position;\n");
-        bcatcstr(glsl, "float gl_PointSize;\n");
-        bcatcstr(glsl, "float gl_ClipDistance[];");
+        bcatcstr(glsl, "\tvec4 gl_Position;\n");
+        bcatcstr(glsl, "\tfloat gl_PointSize;\n");
+        bcatcstr(glsl, "\tfloat gl_ClipDistance[];\n");
         bcatcstr(glsl, "};\n");
-    }*/
+    }
 }
 
 GLLang ChooseLanguage(Shader* psShader)
@@ -671,7 +678,7 @@ bool ToGLSL::Translate()
         {
             // This value will be replaced at runtime with 0 if we need to disable UBO.
             bcatcstr(glsl, "#define HLSLCC_ENABLE_UNIFORM_BUFFERS 1\n");
-            bcatcstr(glsl, "#if HLSLCC_ENABLE_UNIFORM_BUFFERS\n#define UNITY_UNIFORM\n#else\n#define UNITY_UNIFORM uniform\n#endif\n");
+            bcatcstr(glsl, "#if HLSLCC_ENABLE_UNIFORM_BUFFERS\n#define MARU_UNIFORM\n#else\n#define MARU_UNIFORM uniform\n#endif\n");
         }
         bool hasTextures = false;
         for (i = 0; i < psShader->asPhases[0].psDecl.size(); ++i)
@@ -685,8 +692,8 @@ bool ToGLSL::Translate()
         if (hasTextures || hasConstantBuffers)
         {
             // This value will be replaced at runtime with 0 if we need to disable explicit uniform locations.
-            bcatcstr(glsl, "#define UNITY_SUPPORTS_UNIFORM_LOCATION 1\n");
-            bcatcstr(glsl, "#if UNITY_SUPPORTS_UNIFORM_LOCATION\n#define UNITY_LOCATION(x) layout(location = x)\n#define UNITY_BINDING(x) layout(binding = x, std140)\n#else\n#define UNITY_LOCATION(x)\n#define UNITY_BINDING(x) layout(std140)\n#endif\n");
+            bcatcstr(glsl, "#define MARU_SUPPORTS_UNIFORM_LOCATION 1\n");
+            bcatcstr(glsl, "#if MARU_SUPPORTS_UNIFORM_LOCATION\n#define MARU_LOCATION(x) layout(location = x)\n#define MARU_BINDING(x) layout(binding = x, std140)\n#else\n#define MARU_LOCATION(x)\n#define MARU_BINDING(x) layout(std140)\n#endif\n");
         }
     }
 
@@ -883,18 +890,18 @@ bool ToGLSL::Translate()
         {
             if (psContext->flags & HLSLCC_FLAG_VULKAN_BINDINGS)
             {
-                bformata(extensions, "layout(constant_id = %d) const int %s = 2;\n", kArraySizeConstantID, UNITY_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO);
+                bformata(extensions, "layout(constant_id = %d) const int %s = 2;\n", kArraySizeConstantID, MARU_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO);
             }
             else
             {
-                bcatcstr(extensions, "#ifndef " UNITY_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO "\n\t#define " UNITY_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO " 2\n#endif\n");
+                bcatcstr(extensions, "#ifndef " MARU_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO "\n\t#define " MARU_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO " 2\n#endif\n");
             }
         }
         if (m_NeedUnityPreTransformDecl)
         {
             if (psContext->flags & HLSLCC_FLAG_VULKAN_BINDINGS)
             {
-                bformata(extensions, "layout(constant_id = %d) const int %s = 0;\n", kPreTransformConstantID, UNITY_PRETRANSFORM_CONSTANT_NAME);
+                bformata(extensions, "layout(constant_id = %d) const int %s = 0;\n", kPreTransformConstantID, MARU_PRETRANSFORM_CONSTANT_NAME);
             }
         }
 
@@ -1041,18 +1048,18 @@ bool ToGLSL::Translate()
     {
         if (psContext->flags & HLSLCC_FLAG_VULKAN_BINDINGS)
         {
-            bformata(extensions, "layout(constant_id = %d) const int %s = 2;\n", kArraySizeConstantID, UNITY_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO);
+            bformata(extensions, "layout(constant_id = %d) const int %s = 2;\n", kArraySizeConstantID, MARU_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO);
         }
         else
         {
-            bcatcstr(extensions, "#ifndef " UNITY_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO "\n\t#define " UNITY_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO " 2\n#endif\n");
+            bcatcstr(extensions, "#ifndef " MARU_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO "\n\t#define " MARU_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO " 2\n#endif\n");
         }
     }
     if (m_NeedUnityPreTransformDecl)
     {
         if (psContext->flags & HLSLCC_FLAG_VULKAN_BINDINGS)
         {
-            bformata(extensions, "layout(constant_id = %d) const int %s = 0;\n", kPreTransformConstantID, UNITY_PRETRANSFORM_CONSTANT_NAME);
+            bformata(extensions, "layout(constant_id = %d) const int %s = 0;\n", kPreTransformConstantID, MARU_PRETRANSFORM_CONSTANT_NAME);
         }
     }
     bconcat(extensions, glsl);

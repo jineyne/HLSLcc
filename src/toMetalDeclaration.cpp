@@ -1408,7 +1408,7 @@ void ToMetal::TranslateDeclaration(const Declaration* psDecl)
             {
                 std::ostringstream oss;
 
-                // UNITY_FRAMEBUFFER_FETCH_AVAILABLE
+                // MARU_FRAMEBUFFER_FETCH_AVAILABLE
                 // special case mapping for inout color, see HLSLSupport.cginc
                 if (psOperand->iPSInOut && name.size() == 10 && !strncmp(name.c_str(), "SV_Target", 9))
                 {

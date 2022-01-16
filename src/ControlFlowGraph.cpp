@@ -335,7 +335,7 @@ void BasicBlock::RVarUnion(ReachableVariables &a, const ReachableVariables &b)
 
 #if ENABLE_UNIT_TESTS
 
-#define UNITY_EXTERNAL_TOOL 1
+#define _EXTERNAL_TOOL 1
 #include "Projects/PrecompiledHeaders/UnityPrefix.h" // Needed for defines such as ENABLE_CPP_EXCEPTIONS
 #include "Testing.h" // From Runtime/Testing
 

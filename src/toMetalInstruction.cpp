@@ -1971,7 +1971,7 @@ void ToMetal::TranslateInstruction(Instruction* psInst)
             }
             psContext->AddIndentation();
 
-            // UNITY SPECIFIC: you can check case 1158280
+            // MARU SPECIFIC: you can check case 1158280
             // This looks like a hack because it is! There is a bug that is quite hard to reproduce.
             // When doing data analysis we assume that immediates are ints and hope it will be promoted later
             //   which is kinda fine unless there is an unfortunate combination happening:
@@ -4018,7 +4018,7 @@ template <int N> vec<int, N> bitFieldExtractI(const vec<uint, N> width, const ve
 
 #if ENABLE_UNIT_TESTS
 
-#define UNITY_EXTERNAL_TOOL 1
+#define MARU_EXTERNAL_TOOL 1
 #include "Projects/PrecompiledHeaders/UnityPrefix.h" // Needed for defines such as ENABLE_CPP_EXCEPTIONS
 #include "Runtime/Testing/Testing.h"
 

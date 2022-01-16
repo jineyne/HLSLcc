@@ -432,7 +432,7 @@ void ToGLSL::DeclareDynamicIndexWrapper(const char* psName, SHADER_VARIABLE_CLAS
     // Add a simple define that one can search and replace on devices that support dynamic indexing the usual way
     if (m_FunctionDefinitions.find(suffix) == m_FunctionDefinitions.end())
     {
-        m_FunctionDefinitions.insert(std::make_pair(suffix, "#define UNITY_DYNAMIC_INDEX_ES2 0\n"));
+        m_FunctionDefinitions.insert(std::make_pair(suffix, "#define MARU_DYNAMIC_INDEX_ES2 0\n"));
         m_FunctionDefinitionsOrder.push_back(suffix);
     }
 
@@ -474,7 +474,7 @@ void ToGLSL::DeclareDynamicIndexWrapper(const char* psName, SHADER_VARIABLE_CLAS
         bformata(glsl, "%s %s%s", HLSLcc::GetConstructorForType(psContext, eType, 1), psName, suffix);
     }
     bformata(glsl, "(int i){\n");
-    bcatcstr(glsl, "#if UNITY_DYNAMIC_INDEX_ES2\n");
+    bcatcstr(glsl, "#if MARU_DYNAMIC_INDEX_ES2\n");
     bformata(glsl, "    return %s[i];\n", name);
     bcatcstr(glsl, "#else\n");
     bformata(glsl, "#define d_ar %s\n", name);

@@ -3,8 +3,8 @@
 // In Unity, instancing array sizes should be able to be dynamically patched at runtime by defining the macro.
 
 #include <string>
-#define UNITY_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO "UNITY_RUNTIME_INSTANCING_ARRAY_SIZE"
-#define UNITY_PRETRANSFORM_CONSTANT_NAME "UnityDisplayOrientationPreTransform"
+#define MARU_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO "MARU_RUNTIME_INSTANCING_ARRAY_SIZE"
+#define MARU_PRETRANSFORM_CONSTANT_NAME "UnityDisplayOrientationPreTransform"
 
 const unsigned int kArraySizeConstantID = 0;
 const unsigned int kPreTransformConstantID = 1;

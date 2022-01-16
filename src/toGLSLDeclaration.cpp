@@ -83,12 +83,12 @@ void ToGLSL::DeclareConstBufferShaderVariable(const char* varName, const struct 
 
     if (psType->Class == SVC_STRUCT)
     {
-        bformata(glsl, "\t%s%s_Type %s", addUniformPrefix ? "UNITY_UNIFORM " : "", varName, varName);
+        bformata(glsl, "\t%s%s_Type %s", addUniformPrefix ? "MARU_UNIFORM " : "", varName, varName);
         if (psType->Elements > 1)
         {
             if (HLSLcc::IsUnityFlexibleInstancingBuffer(psCBuf))
             {
-                bformata(glsl, "[" UNITY_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO "]");
+                bformata(glsl, "[" MARU_RUNTIME_INSTANCING_ARRAY_SIZE_MACRO "]");
                 m_NeedUnityInstancingArraySizeDecl = true;
             }
             else
@@ -100,7 +100,7 @@ void ToGLSL::DeclareConstBufferShaderVariable(const char* varName, const struct 
         if (psContext->flags & HLSLCC_FLAG_TRANSLATE_MATRICES)
         {
             // Translate matrices into vec4 arrays
-            bformata(glsl, "\t%s%s " HLSLCC_TRANSLATE_MATRIX_FORMAT_STRING "%s", addUniformPrefix ? "UNITY_UNIFORM " : "", HLSLcc::GetConstructorForType(psContext, psType->Type, 4), psType->Rows, psType->Columns, varName);
+            bformata(glsl, "\t%s%s " HLSLCC_TRANSLATE_MATRIX_FORMAT_STRING "%s", addUniformPrefix ? "MARU_UNIFORM " : "", HLSLcc::GetConstructorForType(psContext, psType->Type, 4), psType->Rows, psType->Columns, varName);
             uint32_t elemCount = (psType->Class == SVC_MATRIX_COLUMNS ? psType->Columns : psType->Rows);
             if (psType->Elements > 1)
             {
@@ -110,7 +110,7 @@ void ToGLSL::DeclareConstBufferShaderVariable(const char* varName, const struct 
         }
         else
         {
-            bformata(glsl, "\t%s%s %s", addUniformPrefix ? "UNITY_UNIFORM " : "", HLSLcc::GetMatrixTypeName(psContext, psType->Type, psType->Columns, psType->Rows).c_str(), varName);
+            bformata(glsl, "\t%s%s %s", addUniformPrefix ? "MARU_UNIFORM " : "", HLSLcc::GetMatrixTypeName(psContext, psType->Type, psType->Columns, psType->Rows).c_str(), varName);
             if (psType->Elements > 1)
             {
                 bformata(glsl, "[%d]", psType->Elements);
@@ -119,7 +119,7 @@ void ToGLSL::DeclareConstBufferShaderVariable(const char* varName, const struct 
     }
     else if (psType->Class == SVC_VECTOR && psType->Columns > 1)
     {
-        bformata(glsl, "\t%s%s %s", addUniformPrefix ? "UNITY_UNIFORM " : "", HLSLcc::GetConstructorForType(psContext, psType->Type, psType->Columns), varName);
+        bformata(glsl, "\t%s%s %s", addUniformPrefix ? "MARU_UNIFORM " : "", HLSLcc::GetConstructorForType(psContext, psType->Type, psType->Columns), varName);
 
         if (psType->Elements > 1)
         {
@@ -137,7 +137,7 @@ void ToGLSL::DeclareConstBufferShaderVariable(const char* varName, const struct 
             ((ShaderVarType *)psType)->Type = SVT_INT;
         }
 
-        bformata(glsl, "\t%s%s %s", addUniformPrefix ? "UNITY_UNIFORM " : "", HLSLcc::GetConstructorForType(psContext, psType->Type, 1), varName);
+        bformata(glsl, "\t%s%s %s", addUniformPrefix ? "MARU_UNIFORM " : "", HLSLcc::GetConstructorForType(psContext, psType->Type, 1), varName);
 
         if (psType->Elements > 1)
         {
@@ -944,7 +944,7 @@ void ToGLSL::DeclareUBOConstants(const uint32_t ui32BindingPoint, const Constant
             GLSLCrossDependencyData::GLSLBufferBindPointInfo bindPointInfo = psContext->psDependencies->GetGLSLResourceBinding(cbName, GLSLCrossDependencyData::BufferType_UBO);
             isKnown = bindPointInfo.known;
             slot = bindPointInfo.slot;
-            bformata(glsl, "UNITY_BINDING(%d) ", slot);
+            bformata(glsl, "MARU_BINDING(%d) ", slot);
         }
         else
             bcatcstr(glsl, "layout(std140) ");
@@ -1675,7 +1675,7 @@ static void TranslateResourceTexture(HLSLCrossCompilerContext* psContext, const 
             ((psContext->flags & HLSLCC_FLAG_FORCE_EXPLICIT_LOCATIONS) && ((psContext->flags & HLSLCC_FLAG_COMBINE_TEXTURE_SAMPLERS) != HLSLCC_FLAG_COMBINE_TEXTURE_SAMPLERS)))
         {
             GLSLCrossDependencyData::GLSLBufferBindPointInfo slotInfo = psContext->psDependencies->GetGLSLResourceBinding(tname, GLSLCrossDependencyData::BufferType_Texture);
-            bformata(glsl, "UNITY_LOCATION(%d) ", slotInfo.slot);
+            bformata(glsl, "MARU_LOCATION(%d) ", slotInfo.slot);
         }
         bcatcstr(glsl, "uniform ");
         bcatcstr(glsl, samplerPrecision);
@@ -2551,7 +2551,7 @@ void ToGLSL::TranslateDeclaration(const Declaration* psDecl)
                 {
                     if (!psContext->IsVulkan() && !isKnown && UseReflection(psContext))
                         psContext->m_Reflection.OnConstantBufferBinding(name, actualBindingPoint);
-                    bformata(glsl, "UNITY_LOCATION(%d) ", actualBindingPoint);
+                    bformata(glsl, "MARU_LOCATION(%d) ", actualBindingPoint);
                 }
 
                 bformata(glsl, "layout(std140) uniform %s {\n\tvec4 data[%d];\n} cb%d;\n", name, psOperand->aui32ArraySizes[1], ui32BindingPoint);
@@ -2703,7 +2703,7 @@ void ToGLSL::TranslateDeclaration(const Declaration* psDecl)
                 std::string tname = ResourceName(psContext, RGROUP_TEXTURE, psDecl->asOperands[0].ui32RegisterNumber, 0);
                 GLSLCrossDependencyData::GLSLBufferBindPointInfo slotInfo = psContext->psDependencies->GetGLSLResourceBinding(tname, GLSLCrossDependencyData::BufferType_Texture);
 
-                bformata(glsl, "UNITY_LOCATION(%d) ", slotInfo.slot);
+                bformata(glsl, "MARU_LOCATION(%d) ", slotInfo.slot);
                 if (!slotInfo.known && UseReflection(psContext))
                 {
                     const RESOURCE_DIMENSION dim = psDecl->value.eResourceDimension;

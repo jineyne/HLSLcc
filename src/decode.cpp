@@ -529,7 +529,7 @@ const uint32_t* DecodeDeclaration(Shader* psShader, const uint32_t* pui32Token, 
             ShaderInfo::InOutSignature *psSig = NULL;
             psShader->sInfo.GetInputSignatureFromRegister(psOperand->ui32RegisterNumber, psOperand->ui32CompMask, (const ShaderInfo::InOutSignature**)&psSig);
 
-            /*  UNITY_FRAMEBUFFER_FETCH_AVAILABLE
+            /*  MARU_FRAMEBUFFER_FETCH_AVAILABLE
                 special case mapping for inout color.
 
                 In the fragment shader, setting inout <type> var : SV_Target would result to

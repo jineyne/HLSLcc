@@ -262,7 +262,7 @@ void ToGLSL::AddComparison(Instruction* psInst, ComparisonType eType,
         if (workaroundAdrenoBugs)
         {
             // Workarounds for bug cases 777617, 735299, 776827
-            bcatcstr(glsl, "#ifdef UNITY_ADRENO_ES3\n");
+            bcatcstr(glsl, "#ifdef MARU_ADRENO_ES3\n");
 
             int needsParenthesis = 0;
             psContext->AddIndentation();
@@ -2251,7 +2251,7 @@ void ToGLSL::TranslateInstruction(Instruction* psInst, bool isEmbedded /* = fals
             if (!isEmbedded)
                 psContext->AddIndentation();
 
-            // UNITY SPECIFIC: you can check case 1158280
+            // MARU SPECIFIC: you can check case 1158280
             // This looks like a hack because it is! There is a bug that is quite hard to reproduce.
             // When doing data analysis we assume that immediates are ints and hope it will be promoted later
             //   which is kinda fine unless there is an unfortunate combination happening:
@@ -4779,7 +4779,7 @@ void ToGLSL::TranslateInstruction(Instruction* psInst, bool isEmbedded /* = fals
         const bool workaroundAdrenoBugs = psContext->psShader->eTargetLanguage == LANG_ES_300;
 
         if (workaroundAdrenoBugs)
-            bcatcstr(glsl, "#ifdef UNITY_ADRENO_ES3\n");
+            bcatcstr(glsl, "#ifdef MARU_ADRENO_ES3\n");
 
         for (int i = workaroundAdrenoBugs ? 0 : 1; i < 2; ++i)
         {

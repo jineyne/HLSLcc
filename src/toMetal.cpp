@@ -165,7 +165,7 @@ bool ToMetal::Translate()
     if (!(psShader->eShaderType == HULL_SHADER || psShader->eShaderType == DOMAIN_SHADER))
     {
         if (psContext->flags & HLSLCC_FLAG_DISABLE_FASTMATH)
-            bcatcstr(glsl, "#define UNITY_DISABLE_FASTMATH\n");
+            bcatcstr(glsl, "#define MARU_DISABLE_FASTMATH\n");
         bcatcstr(glsl, "#include <metal_stdlib>\n#include <metal_texture>\nusing namespace metal;\n");
         bcatcstr(glsl, "\n#if !(__HAVE_FMA__)\n#define fma(a,b,c) ((a) * (b) + (c))\n#endif\n\n");
     }
@@ -520,12 +520,12 @@ bool ToMetal::Translate()
         if (psShader->eShaderType == VERTEX_SHADER)
         {
             // Fix HLSL compatibility with DrawProceduralIndirect, SV_InstanceID always starts at 0 but with Metal, a base instance was not subtracted for equal behavior
-            // Base semantics available everywhere starting with iOS9 (except hardware limitation exists with the original Apple A7/A8 GPUs, causing UNITY_SUPPORT_INDIRECT_BUFFERS=0)
+            // Base semantics available everywhere starting with iOS9 (except hardware limitation exists with the original Apple A7/A8 GPUs, causing MARU_SUPPORT_INDIRECT_BUFFERS=0)
             std::for_each(m_StructDefinitions[""].m_Members.begin(), m_StructDefinitions[""].m_Members.end(), [&](MemberDefinitions::value_type &mem)
             {
                 if (mem.first == "mtl_InstanceID")
                 {
-                    bcatcstr(bodyglsl, "#if !UNITY_SUPPORT_INDIRECT_BUFFERS\n");
+                    bcatcstr(bodyglsl, "#if !MARU_SUPPORT_INDIRECT_BUFFERS\n");
                     psContext->AddIndentation();
                     bcatcstr(bodyglsl, "mtl_BaseInstance = 0;\n");
                     bcatcstr(bodyglsl, "#endif\n");
@@ -534,7 +534,7 @@ bool ToMetal::Translate()
                 }
                 else if (mem.first == "mtl_VertexID")
                 {
-                    bcatcstr(bodyglsl, "#if !UNITY_SUPPORT_INDIRECT_BUFFERS\n");
+                    bcatcstr(bodyglsl, "#if !MARU_SUPPORT_INDIRECT_BUFFERS\n");
                     psContext->AddIndentation();
                     bcatcstr(bodyglsl, "mtl_BaseVertex = 0;\n");
                     bcatcstr(bodyglsl, "#endif\n");
